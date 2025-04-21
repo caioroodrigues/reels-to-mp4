@@ -12,10 +12,11 @@
     "postcss": "^8.4.21",
     "tailwindcss": "^3.3.2"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
-  },
+"scripts": {
+  "start": "react-scripts start",
+  "prebuild": "chmod +x ./node_modules/.bin/react-scripts",
+  "build": "react-scripts build"
+},
   "browserslist": {
     "production": [
       ">0.2%",
