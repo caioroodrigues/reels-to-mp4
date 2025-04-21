@@ -5,7 +5,7 @@ function App() {
   const [url, setUrl] = useState("");
 
   const handleDownload = async () => {
-    const response = await fetch("http://localhost:5000/download", {
+    const response = await fetch("https://reels-to-mp4.onrender.com", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url }),
