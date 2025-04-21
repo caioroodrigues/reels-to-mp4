@@ -1,59 +1,56 @@
-import React, { useState } from "react";
-import "./index.css";
+import { useState } from 'react';
 
-function App() {
-  const [url, setUrl] = useState("");
+const DownloadButton = () => {
+  const [url, setUrl] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDownload = async () => {
-    if (!url.includes("instagram.com/reel")) {
-      alert("Insira um link válido de Reels do Instagram.");
+    if (!url) {
+      setError('Por favor, insira uma URL do Instagram.');
       return;
     }
-  
+
+    setIsLoading(true);
+    setError('');
+
     try {
-      const res = await fetch("/api/download", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ url }),
       });
-  
-      const data = await res.json();
-  
-      if (data.downloadUrl) {
-        window.open(data.downloadUrl, "_blank");
+
+      const data = await response.json();
+
+      if (response.ok) {
+        window.open(data.downloadUrl, '_blank'); // Abre o link em nova aba
       } else {
-        alert("Não foi possível obter o vídeo.");
+        setError(data.error || 'Erro ao baixar o vídeo.');
       }
     } catch (err) {
-      alert("Erro ao baixar o vídeo.");
+      setError('Falha na conexão. Tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
-  
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-zinc-800 via-zinc-900 to-black text-white px-4">
-      <h1 className="text-4xl font-bold mb-6 text-center">Conversor de Reels para MP4</h1>
-
+    <div>
       <input
         type="text"
-        placeholder="Cole o link do vídeo aqui..."
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        className="w-full max-w-md p-3 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-purple-600"
+        placeholder="Cole a URL do Instagram Reel"
       />
-
-      <button
-        onClick={handleDownload}
-        className="mt-4 bg-purple-600 hover:bg-purple-700 transition text-white px-6 py-2 rounded-lg font-semibold"
-      >
-        Baixar Vídeo
+      <button onClick={handleDownload} disabled={isLoading}>
+        {isLoading ? 'Baixando...' : 'Baixar Vídeo'}
       </button>
-
-      <footer className="mt-10 text-sm text-gray-400 text-center">
-        © {new Date().getFullYear()} Caio. Todos os direitos reservados.
-      </footer>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
-}
+};
 
-export default App;
+export default DownloadButton;
